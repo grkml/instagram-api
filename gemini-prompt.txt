@@ -1,0 +1,81 @@
+Absolutely! Let's break down this complex task into manageable parts for your VS Code IDE model.
+
+**Summary of Approach & Plan:**
+
+We'll divide the implementation into several logical phases, focusing on incremental development and testing. This will allow the IDE model to handle specific aspects of the project effectively, minimizing errors and ensuring a systematic approach.
+
+1.  **Phase 1: Project Setup and Environment Configuration.** We will set up the project, install dependencies, and configure environment variables.
+2.  **Phase 2: Webhook Verification Endpoint Implementation.** We'll create the GET route for webhook verification, including parameter validation and response logic.
+3.  **Phase 3: Webhook Processing Endpoint - Signature Verification and Payload Parsing.** We'll implement the POST route, focusing on signature verification and initial payload parsing.
+4.  **Phase 4: Database Integration and Event Data Insertion.** We'll integrate Supabase, define TypeScript types, and implement the logic for inserting event data into the `instagram_events` table.
+5.  **Phase 5: Media Data Handling and Insertion.** We'll implement the logic for extracting and inserting media data into the `instagram_event_media` table.
+6.  **Phase 6: Modularization, Error Handling, and Logging.** We'll refactor the code into modular functions, implement robust error handling, and add logging.
+7.  **Phase 7: Comprehensive Testing and Refinement.** We'll conduct thorough testing using sample payloads and refine the API based on the results.
+
+**Individual Parts for the IDE Model:**
+
+**Part 1: Project Setup and Environment Configuration**
+
+* **Prompt:**
+    * "Create a new project directory. Inside the directory, initialize a new Bun project using `bun init -y`. Install the following dependencies: `hono`, `@supabase/supabase-js`, and `dotenv`. Create a `.env` file in the root directory. Add the following environment variables to the `.env` file, using placeholder values for now: `SUPABASE_URL`, `SUPABASE_KEY`, and `INSTAGRAM_APP_SECRET`. Create an `index.ts` file in the root of the project. Ensure that the project is configured to use TypeScript and that the bun.lockb file is created. Ensure that the .env file is added to a .gitignore file."
+    * "Specifically, use Bun.env to load the environment variables. Ensure that the .env file is not commited to version control."
+    * "Reference the Bun documentation for environment variable handling: [https://bun.sh/docs/api/runtime#bun.env](https://www.google.com/search?q=https://bun.sh/docs/api/runtime%23bun.env)"
+
+**Part 2: Webhook Verification Endpoint Implementation**
+
+* **Prompt:**
+    * "In `index.ts`, import `Hono` from `hono`. Create a new Hono instance. Implement a GET route at `/webhook`. This route should extract the `hub.mode`, `hub.verify_token`, and `hub.challenge` query parameters from the request. Verify that `hub.mode` is 'subscribe'. Then, verify that `hub.verify_token` matches the `INSTAGRAM_APP_SECRET` environment variable. If the token is valid, respond with the value of `hub.challenge`. If the token is invalid, respond with a 403 Forbidden status. Use Hono's `c.req.query()` to get the query parameters. Use `c.env.INSTAGRAM_APP_SECRET` to access the environment variable. Use `c.text()` and `c.json()` to create responses. Add a listen function to the hono app to listen on port 3000."
+    * "Reference the Instagram Platform Webhooks documentation for verification details: Instagram Platform Webhooks. Reference Hono documentation for query parameter handling and response creation: [https://hono.dev/docs/](https://hono.dev/docs/)."
+    * "Add a console log to the verification endpoint that logs if the verification was a success or failure."
+
+**Part 3: Webhook Processing Endpoint - Signature Verification and Payload Parsing**
+
+* **Prompt:**
+    * "In `index.ts`, implement a POST route at `/webhook`. This route should verify the `X-Hub-Signature-256` header. Retrieve the raw request body. Obtain the `INSTAGRAM_APP_SECRET` from the environment variables. Use Bun's `crypto.createHmac` function to compute the HMAC digest of the request body. Compare the computed signature with the signature from the header. If they match, parse the JSON payload from the request body. If they do not match, return a 400 Bad Request status. Use `c.req.raw()` to get the raw body. Use `c.req.json()` to parse the JSON payload. Use `Bun.env.INSTAGRAM_APP_SECRET` to get the secret. Use `Bun.crypto.createHmac`. Reference the Instagram Platform Webhooks documentation for signature verification details. Reference Bun's crypto module documentation: [https://bun.sh/docs/api/crypto](https://www.google.com/search?q=https://bun.sh/docs/api/crypto)."
+    * "Add console logs to indicate the success or failure of signature verification."
+
+**Part 4: Database Integration and Event Data Insertion**
+
+* **Prompt:**
+    * "In `index.ts`, import `createClient` from `@supabase/supabase-js`. Initialize the Supabase client using `SUPABASE_URL` and `SUPABASE_KEY` from the environment variables. Define TypeScript types for the `instagram_events` table, including `id`, `event_type`, `timestamp`, `user_id`, `media_id`, `comment_id`, `message_id`, and `payload`. Implement a function to insert data into the `instagram_events` table. Iterate through the `entry` array in the parsed payload. For each event, extract the relevant IDs and event type. Insert a record into the `instagram_events` table. Use the Supabase client's `from('instagram_events').insert()` method. Reference the Supabase client library documentation: [https://supabase.com/docs/reference/javascript/createclient](https://www.google.com/search?q=https://supabase.com/docs/reference/javascript/createclient)."
+    * "Ensure to add types to all variables and functions. Ensure to log any errors that occur during supabase insertions."
+
+**Part 5: Media Data Handling and Insertion**
+
+* **Prompt:**
+    * "In `index.ts`, define TypeScript types for the `instagram_event_media` table, including `id`, `event_id`, `media_url`, and `media_type`. Implement a function to extract media URLs and types from the payload. Insert records into the `instagram_event_media` table, linking them to the corresponding `event_id` from the `instagram_events` table. Use the Supabase client's `from('instagram_event_media').insert()` method. Handle cases where media information is not present. Reference the Supabase client library documentation."
+    * "Add console logs to indicate if a media file was added to the databse or not."
+
+**Part 6: Modularization, Error Handling, and Logging**
+
+* **Prompt:**
+    * "Refactor the code in `index.ts` into modular functions for signature verification, payload parsing, and database operations. Implement try-catch blocks around potentially failing operations. Use Hono's logger middleware to log incoming requests, processing steps, and errors. Implement a function that handles the parsing of different event types."
+    * "Ensure to return appropriate HTTP status codes based on the request outcome."
+
+**Part 7: Comprehensive Testing and Refinement**
+
+* **Prompt:**
+    * "Test the API thoroughly using sample webhook payloads. Use the 'Test' button in the Instagram App Dashboard and tools like ngrok for testing. Refine the API based on the test results. Ensure that all event types are handled correctly. Add more test cases to cover edge cases, such as missing media or malformed data. Add more detailed logging for debugging purposes."
+    * "Add comments to the code to explain the logic and functionality."
+
+**Additional Bonus Fixes, Steps, and Recommendations:**
+
+1.  **Input Validation Middleware:**
+    * Implement Hono's validator middleware to validate the query parameters for the verification endpoint. This will add an extra layer of security.
+2.  **Asynchronous Processing:**
+    * Use `async/await` for database operations to prevent blocking the main thread. This will improve performance and scalability.
+3.  **Error Logging with External Services:**
+    * Integrate a dedicated logging library (e.g., Winston, Pino) and consider using an external logging service (e.g., Sentry, LogRocket) for production environments.
+4.  **Rate Limiting:**
+    * Implement rate limiting middleware to prevent abuse of the API.
+5.  **Health Check Endpoint:**
+    * Implement a `/health` endpoint that returns a 200 OK status if the API is running.
+6.  **Environment Variable Validation:**
+    * Add validation to the environment variables to ensure they are set and valid before running the application.
+7.  **Add a .env.example file:**
+    * Add a .env.example file to the project to show what environment variables are needed.
+8.  **Add a Readme file:**
+    * Add a Readme file to explain how to setup and run the project.
+9.  **Add more detailed error handling for supabase calls:**
+    * Add better error handling for supabase calls, and add specific error messages.
+10.

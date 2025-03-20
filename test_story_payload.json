@@ -1,0 +1,24 @@
+{
+  "object": "instagram",
+  "entry": [
+    {
+      "time": 1617423546,
+      "id": "17841405309444444",
+      "changes": [
+        {
+          "field": "story_insights",
+          "value": {
+            "media_id": "17895695074555555",
+            "media_product_type": "STORY",
+            "impressions": 12345,
+            "reach": 10000,
+            "taps_forward": 5000,
+            "taps_back": 2000,
+            "replies": 150,
+            "exits": 1000
+          }
+        }
+      ]
+    }
+  ]
+}
